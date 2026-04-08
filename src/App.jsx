@@ -18,8 +18,14 @@ function Nav() {
   );
 }
 
-function Markets({ cryptos, loading }) {
+function Markets({ cryptos, loading, handleRefresh }) {
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredCryptos = cryptos.filter(coin => 
+    coin.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    coin.symbol.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="page delay-1">
@@ -28,9 +34,28 @@ function Markets({ cryptos, loading }) {
         <p className="subtitle">Real-time cryptocurrency prices, market caps, and volume.</p>
       </div>
 
+      <div className="controls-bar">
+        <input 
+          type="text" 
+          className="search-input" 
+          placeholder="Search for a coin..." 
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <button className="btn btn-secondary refresh-btn" onClick={handleRefresh}>
+          Refresh 🔄
+        </button>
+      </div>
+
       <div className="content-card full-width">
         {loading ? (
-          <div className="loading-spinner">Loading Market Data...</div>
+          <div className="loading-container">
+            <div className="skeleton-loader"></div>
+            <div className="skeleton-loader"></div>
+            <div className="skeleton-loader"></div>
+            <div className="skeleton-loader"></div>
+            <div className="skeleton-loader"></div>
+          </div>
         ) : (
           <div className="table-responsive">
             <table className="crypto-table">
@@ -43,7 +68,7 @@ function Markets({ cryptos, loading }) {
                 </tr>
               </thead>
               <tbody>
-                {cryptos.map(coin => (
+                {filteredCryptos.length > 0 ? filteredCryptos.map(coin => (
                   <tr 
                     key={coin.id} 
                     className="clickable-row" 
@@ -58,11 +83,17 @@ function Markets({ cryptos, loading }) {
                     </td>
                     <td className="price-cell">${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}</td>
                     <td className={coin.price_change_percentage_24h >= 0 ? "positive-change" : "negative-change"}>
-                      {coin.price_change_percentage_24h > 0 ? '+' : ''}{coin.price_change_percentage_24h?.toFixed(2)}%
+                      <span className="change-badge">
+                        {coin.price_change_percentage_24h > 0 ? '↗ ' : '↘ '}{Math.abs(coin.price_change_percentage_24h || 0).toFixed(2)}%
+                      </span>
                     </td>
                     <td className="mcap-cell">${coin.market_cap.toLocaleString()}</td>
                   </tr>
-                ))}
+                )) : (
+                  <tr>
+                    <td colSpan="4" className="empty-state">No coins found matching "{searchTerm}"</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -220,9 +251,9 @@ function App() {
   const [cryptos, setCryptos] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch highest market cap coins once at App mounting to share across views easily
-  useEffect(() => {
-    fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1')
+  const fetchCryptos = () => {
+    setLoading(true);
+    fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1')
       .then(res => res.json())
       .then(data => {
         setCryptos(data);
@@ -232,6 +263,15 @@ function App() {
         console.error(err);
         setLoading(false);
       });
+  };
+
+  // Fetch highest market cap coins once at App mounting
+  useEffect(() => {
+    fetchCryptos();
+    
+    // Auto refresh every 60 seconds
+    const interval = setInterval(fetchCryptos, 60000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -244,7 +284,7 @@ function App() {
         <Nav />
         <main className="main-content">
           <Routes>
-            <Route path="/" element={<Markets cryptos={cryptos} loading={loading} />} />
+            <Route path="/" element={<Markets cryptos={cryptos} loading={loading} handleRefresh={fetchCryptos} />} />
             <Route path="/coin/:id" element={<CoinDetail cryptos={cryptos} />} />
           </Routes>
         </main>
