@@ -133,15 +133,19 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 3rem 5%;
+  padding: 1rem 5%;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* top align */
 }
 
 .page {
   width: 100%;
-  max-width: 900px;
+  max-width: 1100px; /* wider layout to fit TV chart */
   animation: fadeIn 0.6s ease-out backwards;
+}
+
+.display-wide {
+  max-width: 1600px; /* exceptionally wide for charts */
 }
 
 .delay-1 { animation-delay: 0.1s; }
@@ -154,16 +158,24 @@ body {
 }
 
 /* Hero Section */
-.hero-section {
-  text-align: center;
-  padding: 4rem 0;
+.hero-compact {
+  text-align: left;
+  padding: 0;
 }
 
-.title {
-  font-size: 4.5rem;
+.market-header-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+}
+
+.title-compact {
+  font-size: 2.2rem;
   font-weight: 800;
   line-height: 1.1;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.2rem;
 }
 
 .gradient-text {
@@ -173,13 +185,64 @@ body {
   background-clip: text;
 }
 
-.subtitle {
-  font-size: 1.5rem;
+.subtitle-compact {
+  font-size: 1rem;
   color: var(--text-secondary);
-  margin-bottom: 3rem;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+}
+
+.controls-bar-compact {
+  display: flex;
+  gap: 1rem;
+  min-width: 350px;
+}
+
+/* Coin Detail / Chart Styles Compact */
+.coin-header-detail-compact {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.back-btn-compact {
+  padding: 0.4rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 8px;
+}
+
+.coin-title-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.coin-logo-medium {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.price-row-compact {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-left: auto; /* push to right */
+}
+
+.price-medium {
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.tradingview-wrapper {
+  width: 100%;
+  height: 70vh; /* large responsive height */
+  min-height: 600px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
 }
 
 .hero-buttons {
@@ -444,31 +507,9 @@ body {
 }
 
 .coin-header-detail {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  display: none;
 }
 
-.coin-logo-large {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-.price-row {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  margin-top: 0.5rem;
-}
-
-.price-large {
-  font-size: 2rem;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-}
 
 .chart-container {
   width: 100%;
@@ -487,15 +528,8 @@ body {
   font-size: 1.1rem;
 }
 
-/* UX Improvements */
 .controls-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  max-width: 1000px;
-  margin-bottom: 2rem;
-  gap: 1rem;
+  display: none;
 }
 
 .search-input {
