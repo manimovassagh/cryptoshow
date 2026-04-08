@@ -1,82 +1,81 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
-// We are skipping App.css and completely relying on index.css for rich aesthetics
 
 function Nav() {
   const location = useLocation();
   return (
     <nav className="navbar">
       <div className="nav-brand">
-        ✨ <span>Astro<span className="brand-highlight">Route</span></span>
+        ✨ <span>Crypto<span className="brand-highlight">Show</span></span>
       </div>
       <ul className="nav-links">
         <li>
-          <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Home</Link>
-        </li>
-        <li>
-          <Link to="/about" className={location.pathname === '/about' ? 'active' : ''}>About</Link>
-        </li>
-        <li>
-          <Link to="/features" className={location.pathname === '/features' ? 'active' : ''}>Features</Link>
+          <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Markets</Link>
         </li>
       </ul>
     </nav>
   );
 }
 
-function Home() {
+function Markets() {
+  const [cryptos, setCryptos] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1')
+      .then(res => res.json())
+      .then(data => {
+        setCryptos(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
+
   return (
-    <div className="page home-page delay-1">
+    <div className="page delay-1">
       <div className="hero-section">
-        <h1 className="title">Welcome to <span className="gradient-text">GitHub Pages</span></h1>
-        <p className="subtitle">Seamlessly deploying React apps with Vite and React Router.</p>
-        <div className="hero-buttons">
-          <Link to="/about" className="btn btn-primary">Discover More</Link>
-          <a href="https://github.com" target="_blank" rel="noreferrer" className="btn btn-secondary">View on GitHub</a>
-        </div>
+        <h1 className="title">Live <span className="gradient-text">Crypto Markets</span></h1>
+        <p className="subtitle">Real-time cryptocurrency prices, market caps, and volume.</p>
       </div>
-    </div>
-  );
-}
 
-function About() {
-  return (
-    <div className="page delay-2">
-      <div className="content-card">
-        <h2 className="section-title">About This Template</h2>
-        <p className="section-text">
-          This single-page application is built using <strong>React</strong> and <strong>Vite</strong>. 
-          It uses <strong>HashRouter</strong> to ensure that your paths are correctly resolved 
-          on GitHub Pages without needing 404 tricks.
-        </p>
-        <div className="feature-grid">
-          <div className="feature-item">
-            <span className="icon">🚀</span>
-            <h3>Blazing Fast</h3>
-            <p>Powered by Vite for near-instant HMR and fast builds.</p>
+      <div className="content-card full-width">
+        {loading ? (
+          <div className="loading-spinner">Loading Market Data...</div>
+        ) : (
+          <div className="table-responsive">
+            <table className="crypto-table">
+              <thead>
+                <tr>
+                  <th>Coin</th>
+                  <th>Price</th>
+                  <th>24h Change</th>
+                  <th>Market Cap</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cryptos.map(coin => (
+                  <tr key={coin.id}>
+                    <td className="coin-cell">
+                      <img src={coin.image} alt={coin.name} className="coin-logo" />
+                      <div>
+                        <div className="coin-name">{coin.name}</div>
+                        <div className="coin-symbol">{coin.symbol.toUpperCase()}</div>
+                      </div>
+                    </td>
+                    <td className="price-cell">${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}</td>
+                    <td className={coin.price_change_percentage_24h >= 0 ? "positive-change" : "negative-change"}>
+                      {coin.price_change_percentage_24h > 0 ? '+' : ''}{coin.price_change_percentage_24h?.toFixed(2)}%
+                    </td>
+                    <td className="mcap-cell">${coin.market_cap.toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <div className="feature-item">
-            <span className="icon">🛣️</span>
-            <h3>Router Ready</h3>
-            <p>React Router configuration included directly in the box.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Features() {
-  return (
-    <div className="page delay-3">
-      <div className="content-card">
-        <h2 className="section-title">Amazing Features</h2>
-        <ul className="pretty-list">
-          <li><strong>Rich Aesthetics:</strong> Glassmorphism and dynamic gradients.</li>
-          <li><strong>Micro-animations:</strong> Smooth hover effects and transitions.</li>
-          <li><strong>Vite Setup:</strong> Built using modern tooling defaults.</li>
-          <li><strong>GitHub Pages:</strong> Simple push-to-deploy structure.</li>
-        </ul>
+        )}
       </div>
     </div>
   );
@@ -93,13 +92,11 @@ function App() {
         <Nav />
         <main className="main-content">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/features" element={<Features />} />
+            <Route path="/" element={<Markets />} />
           </Routes>
         </main>
         <footer className="footer">
-          <p>© {new Date().getFullYear()} Modern React + Vite Template. Hosted on GitHub Pages.</p>
+          <p>© {new Date().getFullYear()} CryptoShow Template. Powered by CoinGecko.</p>
         </footer>
       </div>
     </HashRouter>

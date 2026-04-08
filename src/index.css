@@ -332,3 +332,98 @@ body {
     flex-direction: column;
   }
 }
+
+/* Crypto specific styles */
+.full-width {
+  max-width: 1000px;
+  width: 100%;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.crypto-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  margin-top: 1rem;
+}
+
+.crypto-table th {
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding: 1rem;
+  border-bottom: 1px solid var(--card-border);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.crypto-table td {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background 0.3s ease;
+}
+
+.crypto-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.coin-cell {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.coin-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.coin-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.coin-symbol {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.price-cell {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.positive-change {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.negative-change {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.mcap-cell {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.2rem;
+  color: var(--accent-color);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}

@@ -1,9 +1,9 @@
 {
-  "name": "react-githubpages",
+  "name": "cryptoshow",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://manimovassagh.github.io/react-githubpages",
+  "homepage": "https://manimovassagh.github.io/cryptoshow",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
